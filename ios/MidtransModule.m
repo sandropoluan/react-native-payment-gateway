@@ -38,14 +38,14 @@ RCT_EXPORT_METHOD(checkOut:(NSDictionary*) optionConect
                                                                        phone:[mapUserDetail valueForKey:@"phoneNumber"]
                                                                      address:[mapUserDetail valueForKey:@"address"]
                                                                         city:[mapUserDetail valueForKey:@"city"]
-                                                                  postalCode:[mapUserDetail valueForKey:@"zipcode"]
+                                                                  postalCode:[mapUserDetail valueForKey:@"zipCode"]
                                                                  countryCode:[mapUserDetail valueForKey:@"country"]];
     MidtransAddress *billingAddress = [MidtransAddress addressWithFirstName:[mapUserDetail valueForKey:@"fullName"]
                                                                     lastName:@""
                                                                        phone:[mapUserDetail valueForKey:@"phoneNumber"]
                                                                      address:[mapUserDetail valueForKey:@"address"]
                                                                         city:[mapUserDetail valueForKey:@"city"]
-                                                                  postalCode:[mapUserDetail valueForKey:@"zipcode"]
+                                                                  postalCode:[mapUserDetail valueForKey:@"zipCode"]
                                                                  countryCode:[mapUserDetail valueForKey:@"country"]];
     
     MidtransCustomerDetails *customerDetail =
