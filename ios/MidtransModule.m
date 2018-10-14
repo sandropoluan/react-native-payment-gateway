@@ -10,6 +10,8 @@
 }
 RCT_EXPORT_MODULE();
 
+RCTResponseSenderBlock callback;
+
 RCT_EXPORT_METHOD(checkOut:(NSDictionary*) optionConect
                   :(NSDictionary*) transRequest
                   : (NSArray*) items
@@ -74,6 +76,7 @@ RCT_EXPORT_METHOD(checkOut:(NSDictionary*) optionConect
              [ctrl presentViewController:vc animated:NO completion:nil];
              //set the delegate
              vc.paymentDelegate = self;
+             callback = resultCheckOut;
          }
          else {
              NSLog(@"%@", error);
@@ -84,18 +87,21 @@ RCT_EXPORT_METHOD(checkOut:(NSDictionary*) optionConect
 #pragma mark - MidtransUIPaymentViewControllerDelegate
 
 - (void)paymentViewController:(MidtransUIPaymentViewController *)viewController paymentSuccess:(MidtransTransactionResult *)result {
+    callback(@[@"success"]);
     NSLog(@"success: %@", result);
 }
 
 - (void)paymentViewController:(MidtransUIPaymentViewController *)viewController paymentFailed:(NSError *)error {
-//    [self showAlertError:error];
+    callback(@[@"error"]);
 }
 
 - (void)paymentViewController:(MidtransUIPaymentViewController *)viewController paymentPending:(MidtransTransactionResult *)result {
+    callback(@[@"pending"]);
     NSLog(@"pending: %@", result);
 }
 
 - (void)paymentViewController_paymentCanceled:(MidtransUIPaymentViewController *)viewController {
+    callback(@[@"canceled"]);
     NSLog(@"canceled");
 }
 @end
