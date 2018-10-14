@@ -92,7 +92,7 @@ RCT_EXPORT_METHOD(checkOut:(NSDictionary*) optionConect
 }
 
 - (void)paymentViewController:(MidtransUIPaymentViewController *)viewController paymentFailed:(NSError *)error {
-    callback(@[@"error"]);
+    callback(@[@"invalid"]);
 }
 
 - (void)paymentViewController:(MidtransUIPaymentViewController *)viewController paymentPending:(MidtransTransactionResult *)result {
