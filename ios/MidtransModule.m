@@ -19,12 +19,13 @@ RCT_EXPORT_METHOD(checkOut:(NSDictionary*) optionConect
                   : (NSDictionary*) mapUserDetail
                   : (NSDictionary*) optionColorTheme
                   : (NSDictionary*) optionFont
-                  :(RCTResponseSenderBlock)resultCheckOut){
-    
+                  : (RCTResponseSenderBlock)resultCheckOut
+                  : (RCTResponseSenderBlock)onFail){
+
     [CONFIG setClientKey:[optionConect valueForKey:@"clientKey"]
              environment:MidtransServerEnvironmentSandbox
        merchantServerURL:[optionConect valueForKey:@"urlMerchant"]];
-    
+
     NSMutableArray *itemitems = [[NSMutableArray alloc] init];
     for (NSDictionary *ele in items) {
         MidtransItemDetail *tmp =
@@ -34,7 +35,7 @@ RCT_EXPORT_METHOD(checkOut:(NSDictionary*) optionConect
                                           quantity:[ele valueForKey:@"qty"]];
         [itemitems addObject:tmp];
     }
-    
+
     MidtransAddress *shippingAddress = [MidtransAddress addressWithFirstName:[mapUserDetail valueForKey:@"fullName"]
                                                                     lastName:@""
                                                                        phone:[mapUserDetail valueForKey:@"phoneNumber"]
@@ -49,7 +50,7 @@ RCT_EXPORT_METHOD(checkOut:(NSDictionary*) optionConect
                                                                         city:[mapUserDetail valueForKey:@"city"]
                                                                   postalCode:[mapUserDetail valueForKey:@"zipCode"]
                                                                  countryCode:[mapUserDetail valueForKey:@"country"]];
-    
+
     MidtransCustomerDetails *customerDetail =
     [[MidtransCustomerDetails alloc] initWithFirstName:[mapUserDetail valueForKey:@"fullName"]
                                               lastName:@"lastname"
@@ -57,12 +58,12 @@ RCT_EXPORT_METHOD(checkOut:(NSDictionary*) optionConect
                                                  phone:[mapUserDetail valueForKey:@"phoneNumber"]
                                        shippingAddress:shippingAddress
                                         billingAddress:billingAddress];
-    
+
     NSNumber *totalAmount = [NSNumber numberWithInt:[[transRequest valueForKey:@"totalAmount"] intValue]];
     MidtransTransactionDetails *transactionDetail =
     [[MidtransTransactionDetails alloc] initWithOrderID:[transRequest valueForKey:@"transactionId"]
                                          andGrossAmount:totalAmount];
-    
+
     [[MidtransMerchantClient shared]
      requestTransactionTokenWithTransactionDetails:transactionDetail
      itemDetails:itemitems
@@ -70,15 +71,16 @@ RCT_EXPORT_METHOD(checkOut:(NSDictionary*) optionConect
      completion:^(MidtransTransactionTokenResponse * _Nullable token, NSError * _Nullable error) {
          if (token) {
              UIViewController *ctrl = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
-             
+
              MidtransUIPaymentViewController *vc = [[MidtransUIPaymentViewController alloc] initWithToken:token];
-             
+
              [ctrl presentViewController:vc animated:NO completion:nil];
              //set the delegate
              vc.paymentDelegate = self;
              callback = resultCheckOut;
          }
          else {
+             onFail(@[@"error"]);
              NSLog(@"%@", error);
          }
      }];
@@ -92,7 +94,8 @@ RCT_EXPORT_METHOD(checkOut:(NSDictionary*) optionConect
 }
 
 - (void)paymentViewController:(MidtransUIPaymentViewController *)viewController paymentFailed:(NSError *)error {
-    callback(@[@"invalid"]);
+//    [self showAlertError:error];
+    callback(@[@"error"]);
 }
 
 - (void)paymentViewController:(MidtransUIPaymentViewController *)viewController paymentPending:(MidtransTransactionResult *)result {
@@ -105,4 +108,3 @@ RCT_EXPORT_METHOD(checkOut:(NSDictionary*) optionConect
     NSLog(@"canceled");
 }
 @end
-  
