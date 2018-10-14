@@ -1,4 +1,4 @@
-import {NativeModules} from 'react-native';
+import {NativeModules, Platform} from 'react-native';
 
 const {MidtransModule} = NativeModules;
 
@@ -10,8 +10,22 @@ export default {
                         mapUserDetail: ?object,
                         optionColorTheme: ?object,
                         optionFont: ?object,
-                        resultCheckOut) {
-        MidtransModule.checkOut(
+                        resultCheckOut,
+                        onFail = ()=>{},
+                         ) {
+        if(Platform.OS === 'ios'){
+          MidtransModule.checkOut(
+              optionConect,
+              transRequest,
+              itemDetails,
+              creditCardOptions,
+              mapUserDetail,
+              optionColorTheme,
+              optionFont,
+              resultCheckOut,
+              onFail);
+        } else {
+         MidtransModule.checkOut(
             optionConect,
             transRequest,
             itemDetails,
@@ -20,5 +34,6 @@ export default {
             optionColorTheme,
             optionFont,
             resultCheckOut);
+        }
     },
 };
